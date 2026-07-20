@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
         const seconds = String(date.getSeconds()).padStart(2, '0');
-        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        return `${year}-${month}-${day}  ${hours}:${minutes}:${seconds}`;
     }
 
     function formatEntryTime(date) {
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Start/Reset Count-up Timer
+    // Start/Reset Countdown Timer
     function startCountdown() {
         clearInterval(countdownInterval);
         
@@ -116,7 +116,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const updateTimerDisplay = () => {
             const elapsed = Math.max(0, Math.floor((Date.now() - startTime) / 1000));
-            countdownTimerEl.textContent = formatCountdown(elapsed);
+            const remaining = Math.max(0, config.countdownSeconds - elapsed);
+            
+            if (remaining === 0) {
+                // Timer reached 0: reset starting point
+                startTime = Date.now();
+                localStorage.setItem('timer_start_time', startTime);
+                
+                // If using dynamic entry time, refresh it as well
+                if (!config.entryTime) {
+                    const defaultEntry = new Date(Date.now() - 60000);
+                    entryTimeEl.textContent = formatEntryTime(defaultEntry);
+                }
+                
+                countdownTimerEl.textContent = formatCountdown(config.countdownSeconds);
+            } else {
+                countdownTimerEl.textContent = formatCountdown(remaining);
+            }
         };
 
         updateTimerDisplay();
@@ -186,9 +202,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Modal Interaction
-    if (settingsToggle) {
-        settingsToggle.addEventListener('click', () => {
+    // Modal Interaction (Hidden trigger: Double click/tap on User ID)
+    if (userIdEl && settingsModal) {
+        const openSettings = () => {
             // Load config into inputs
             inputUserId.value = config.userId;
             inputHeader.value = config.headerText;
@@ -202,6 +218,21 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleBg.checked = config.useBgImage;
 
             settingsModal.classList.add('active');
+        };
+
+        // Desktop double click on user ID
+        userIdEl.addEventListener('dblclick', openSettings);
+
+        // Mobile double tap on user ID
+        let lastHeaderTap = 0;
+        userIdEl.addEventListener('touchend', (e) => {
+            const currentTime = Date.now();
+            const tapLength = currentTime - lastHeaderTap;
+            if (tapLength < 300 && tapLength > 0) {
+                openSettings();
+                e.preventDefault();
+            }
+            lastHeaderTap = currentTime;
         });
 
         btnCancel.addEventListener('click', () => {

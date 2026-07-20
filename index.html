@@ -8,52 +8,90 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Background overlay for the generated isometric security image -->
-    <div class="bg-overlay" id="bgOverlay"></div>
+    <div class="page-wrapper">
+        <div class="phone-container" id="phoneContainer">
+            <!-- Background overlay for the generated isometric security image -->
+            <div class="bg-overlay" id="bgOverlay"></div>
 
-    <div class="app-container">
-        <!-- Top user identifier -->
-        <header class="header-container">
-            <h1 class="user-id" id="userId">N2632049(丁德順)</h1>
-        </header>
+            <!-- Top user identifier -->
+            <header class="header-container">
+                <h1 class="user-id" id="userId">N2632049(丁德順)</h1>
+            </header>
 
-        <!-- Compliance Check Card -->
-        <main class="compliance-card">
-            <div class="card-header" id="cardHeader">
-                您的设备已符合安全规范
-            </div>
-            
-            <div class="card-body">
-                <!-- Ticking clock (shows current time) -->
-                <div class="current-time" id="currentTime">
-                    2026-7-2 07:53:41
+            <!-- Compliance Check Card -->
+            <main class="compliance-card">
+                <div class="card-header" id="cardHeader">
+                    您的设备已符合安全规范
                 </div>
                 
-                <!-- Compliance checkmark logo -->
-                <div class="icon-wrapper">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20 6L9 17L4 12" />
-                    </svg>
+                <div class="card-body">
+                    <!-- Ticking clock (shows current time) -->
+                    <div class="current-time" id="currentTime">
+                        2026-7-2 07:53:41
+                    </div>
+                    
+                    <!-- Compliance checkmark logo -->
+                    <div class="icon-wrapper">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 6L9 17L4 12" />
+                        </svg>
+                    </div>
+                    
+                    <!-- Status indicators -->
+                    <h2 class="status-title">Successful entry</h2>
+                    <div class="entry-time" id="entryTime">2026-07-02 07:52</div>
+                    
+                    <button class="refresh-btn" id="refreshBtn">刷新二维码</button>
+                    
+                    <div class="active-status">已生效</div>
+                    <div class="countdown-timer" id="countdownTimer">00:59</div>
                 </div>
-                
-                <!-- Status indicators -->
-                <h2 class="status-title">Successful entry</h2>
-                <div class="entry-time" id="entryTime">2026-07-02 07:52</div>
-                
-                <button class="refresh-btn" id="refreshBtn">刷新二维码</button>
-                
-                <div class="active-status">已生效</div>
-                <div class="countdown-timer" id="countdownTimer">00:59</div>
-            </div>
-        </main>
+            </main>
 
-        <!-- Dynamic warning / instructions at footer -->
-        <footer class="footer-text" id="footerText">
-            尊敬的員工您好，您已進入訊越涉密區域，出於安全考慮，您的手機攝像頭將被禁止使用，感謝您的配合。
-        </footer>
+            <!-- Dynamic warning / instructions at footer -->
+            <footer class="footer-text" id="footerText">
+                尊敬的員工您好，您已進入訊越涉密區域，出於安全考慮，您的手機攝像頭將被禁止使用，感謝您的配合。
+            </footer>
+        </div>
     </div>
 
-
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <h3>配置选项 (Settings)</h3>
+            <div class="form-group">
+                <label for="inputUserId">员工工号 (User ID)</label>
+                <input type="text" id="inputUserId" placeholder="N2632049(丁德順)">
+            </div>
+            <div class="form-group">
+                <label for="inputHeader">卡片页眉 (Card Header)</label>
+                <input type="text" id="inputHeader" placeholder="您的设备已符合安全规范">
+            </div>
+            <div class="form-group">
+                <label for="inputEntryTime">进入时间 (Entry Time)</label>
+                <input type="text" id="inputEntryTime" placeholder="YYYY-MM-DD HH:mm (留空为动态)">
+            </div>
+            <div class="form-group">
+                <label for="inputCountdown">倒计时秒数 (Countdown Seconds)</label>
+                <input type="number" id="inputCountdown" placeholder="60">
+            </div>
+            <div class="form-group">
+                <label for="inputFooter">页脚警告 (Footer Text)</label>
+                <textarea id="inputFooter" placeholder="页脚警告说明"></textarea>
+            </div>
+            <div class="toggle-switch">
+                <span>使用背景图片 (Background Image)</span>
+                <label class="switch">
+                    <input type="checkbox" id="toggleBg" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="settings-actions">
+                <button class="btn btn-cancel" id="btnCancel">取消</button>
+                <button class="btn btn-save" id="btnSave">保存</button>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

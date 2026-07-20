@@ -14,8 +14,8 @@
     --gold-text: #d5b376;
     --card-bg: #ffffff;
     --text-primary: #000000;
-    --text-title: #5c5c5c;
-    --text-secondary: #7e7e7e;
+    --text-title: #5b626e;
+    --text-secondary: #7f7f7f;
     --status-green: #00b050;
 }
 
@@ -23,16 +23,63 @@ body {
     background: var(--bg-color);
     color: #ffffff;
     min-height: 100vh;
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
-/* Background image overlay */
+/* Page wrapper to hold the centered container on desktop */
+.page-wrapper {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Phone container acts as the container query boundary */
+.phone-container {
+    container-type: inline-size;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background: linear-gradient(to bottom, #181c27 0%, #242938 100%);
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Desktop: lock aspect ratio to 1320x2868 */
+@media (min-width: 601px) {
+    .phone-container {
+        height: 95vh;
+        width: calc(95vh * 1320 / 2868);
+        border-radius: 40px;
+        border: 4px solid #2a2e3f;
+    }
+}
+
+/* Mobile: take full screen */
+@media (max-width: 600px) {
+    .phone-container {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        border: none;
+    }
+}
+
+/* Background image overlay inside container */
 .bg-overlay {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -41,87 +88,81 @@ body {
     background-size: cover;
     background-position: center;
     opacity: 0.18;
-    z-index: -1;
+    z-index: 0;
     pointer-events: none;
 }
 
-/* Main wrapper to mimic mobile layout on desktop */
-.app-container {
-    width: 100%;
-    max-width: 430px; /* Mobile width container */
-    min-height: 100vh;
-    padding: 20px 24px 40px 24px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    z-index: 1;
-}
-
-/* Header styling */
+/* Content blocks positioning */
 .header-container {
-    margin-top: 10px;
-    margin-bottom: 20px;
+    margin-top: 10.6cqw; /* 140px / 1320px */
+    margin-bottom: 5.3cqw; /* 70px / 1320px */
     text-align: center;
+    z-index: 1;
+    position: relative;
 }
 
 .user-id {
     color: var(--gold-text);
-    font-size: 1.35rem;
+    font-size: 3.64cqw; /* 48px / 1320px */
     font-weight: 500;
-    letter-spacing: 0.5px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    letter-spacing: 0.08cqw;
+    text-shadow: 0 0.15cqw 0.3cqw rgba(0,0,0,0.3);
 }
 
-/* Card container */
+/* Card layout */
 .compliance-card {
-    width: 100%;
-    background: var(--card-bg);
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-    display: flex;
-    flex-direction: column;
+    width: 86.36cqw; /* 1140px / 1320px */
+    background: transparent;
+    border-radius: 2.42cqw; /* 32px / 1320px */
     position: relative;
-    margin-bottom: 30px;
+    z-index: 1;
+    margin-bottom: 0;
 }
 
-/* Card Header */
+/* Yellow card header */
 .card-header {
     background-color: var(--gold-theme);
     color: #ffffff;
     text-align: center;
-    padding: 16px 16px;
+    height: 16.36cqw; /* 216px / 1320px */
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-weight: 400;
-    font-size: 0.95rem;
-    letter-spacing: 0.5px;
+    font-size: 2.88cqw; /* 38px / 1320px */
+    letter-spacing: 0.05cqw;
+    border-top-left-radius: 2.42cqw;
+    border-top-right-radius: 2.42cqw;
     position: relative;
 }
 
-/* Ticket circle cutouts on left and right side where header joins body */
+/* Ticket circle cutouts at header seam */
 .card-header::before,
 .card-header::after {
     content: '';
     position: absolute;
-    width: 16px;
-    height: 16px;
-    background-color: var(--bg-color); /* Matches the base page background */
+    width: 3.03cqw; /* 40px / 1320px */
+    height: 3.03cqw;
+    background-color: #1a1d29; /* Blends with gradient background */
     border-radius: 50%;
-    bottom: -8px;
+    bottom: -1.515cqw;
     z-index: 2;
 }
 
 .card-header::before {
-    left: -8px;
+    left: -1.515cqw;
 }
 
 .card-header::after {
-    right: -8px;
+    right: -1.515cqw;
 }
 
 /* Card Body */
 .card-body {
-    padding: 24px 20px 30px 20px;
+    background-color: var(--card-bg);
+    border-bottom-left-radius: 2.42cqw;
+    border-bottom-right-radius: 2.42cqw;
+    padding: 6.82cqw 6.06cqw 6.06cqw 6.06cqw; /* T:90px, L/R:80px, B:80px */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -131,129 +172,100 @@ body {
 
 /* Current dynamic clock */
 .current-time {
-    font-size: 1.22rem;
-    font-weight: 500;
+    font-size: 3.79cqw; /* 50px / 1320px */
+    font-weight: 700;
     color: #000000;
-    margin-top: 5px;
-    margin-bottom: 35px;
-    letter-spacing: 0.2px;
+    margin-top: 0.75cqw;
+    margin-bottom: 11.36cqw; /* 150px / 1320px */
+    letter-spacing: 0.05cqw;
 }
 
-/* Circular checkmark wrapper */
+/* Circle checkmark */
 .icon-wrapper {
-    width: 86px;
-    height: 86px;
+    width: 21.21cqw; /* 280px / 1320px */
+    height: 21.21cqw;
     background-color: var(--gold-theme);
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 15px;
-    box-shadow: 0 4px 12px rgba(235, 176, 45, 0.25);
+    margin-bottom: 6.06cqw; /* 80px / 1320px */
+    box-shadow: 0 0.6cqw 1.8cqw rgba(235, 176, 45, 0.2);
 }
 
 .icon-wrapper svg {
-    width: 44px;
-    height: 44px;
+    width: 10.6cqw; /* 140px / 1320px */
+    height: 10.6cqw;
     fill: none;
     stroke: #ffffff;
-    stroke-width: 5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    stroke-width: 3.5;
+    stroke-linecap: square;
+    stroke-linejoin: miter;
 }
 
-/* Entry status label */
+/* Status labels */
 .status-title {
-    font-size: 1.4rem;
+    font-size: 4.24cqw; /* 56px / 1320px */
     font-weight: 600;
     color: var(--text-title);
-    margin-bottom: 4px;
+    margin-bottom: 1.2cqw; /* 16px / 1320px */
 }
 
-/* Record entry time */
 .entry-time {
-    font-size: 1.05rem;
+    font-size: 3.33cqw; /* 44px / 1320px */
     color: var(--text-secondary);
     font-weight: 500;
-    margin-bottom: 35px;
+    margin-bottom: 11.36cqw; /* 150px / 1320px */
 }
 
 /* Refresh link */
 .refresh-btn {
-    font-size: 0.95rem;
+    font-size: 2.88cqw; /* 38px / 1320px */
     color: var(--text-title);
     text-decoration: none;
     cursor: pointer;
-    margin-bottom: 15px;
+    margin-bottom: 6.06cqw; /* 80px / 1320px */
     transition: color 0.2s;
     user-select: none;
     border: none;
     background: none;
-    padding: 5px 10px;
+    padding: 0.38cqw 0.76cqw;
+    outline: none;
 }
 
 .refresh-btn:hover {
     color: var(--text-primary);
-    text-decoration: underline;
 }
 
-/* Live Active green label */
+/* Green status timers */
 .active-status {
-    font-size: 1.35rem;
-    font-weight: 500;
+    font-size: 4.54cqw; /* 60px / 1320px */
+    font-weight: 600;
     color: var(--status-green);
-    margin-bottom: 4px;
+    margin-bottom: 0.91cqw; /* 12px / 1320px */
 }
 
-/* Timer countdown */
 .countdown-timer {
-    font-size: 1.35rem;
-    font-weight: 500;
+    font-size: 4.24cqw; /* 56px / 1320px */
+    font-weight: 600;
     color: var(--status-green);
 }
 
-/* Bottom description instructions */
 .footer-text {
-    margin-top: 15px;
+    margin-top: 8.33cqw; /* 110px / 1320px */
     color: var(--gold-text);
-    font-size: 0.88rem;
-    line-height: 1.6;
+    font-size: 3.71cqw; /* Adjusted to fit exactly 23 characters per line (so '配合' starts 3rd line) */
+    line-height: 1.65;
     text-align: justify;
-    padding: 0 16px;
-    letter-spacing: 0.5px;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    text-indent: 2em; /* 2 characters indent */
+    padding: 0 6.82cqw; /* 90px / 1320px */
+    letter-spacing: 0.04cqw;
+    text-shadow: 0 0.08cqw 0.15cqw rgba(0,0,0,0.2);
+    z-index: 1;
+    position: relative;
+    margin-bottom: 8.33cqw;
 }
 
-/* Floating Settings Button */
-.settings-toggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    z-index: 100;
-    transition: all 0.3s ease;
-}
-
-.settings-toggle:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: rotate(45deg);
-}
-
-.settings-toggle svg {
-    width: 20px;
-    height: 20px;
-    fill: #ffffff;
-    opacity: 0.7;
-}
 
 /* Settings Modal */
 .settings-modal {
@@ -263,7 +275,7 @@ body {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(8px);
     z-index: 1000;
     display: flex;
     justify-content: center;
@@ -295,6 +307,7 @@ body {
 }
 
 .settings-content h3 {
+    margin-top: 0;
     margin-bottom: 20px;
     font-size: 1.2rem;
     font-weight: 600;
@@ -305,6 +318,7 @@ body {
 
 .form-group {
     margin-bottom: 16px;
+    text-align: left;
 }
 
 .form-group label {
