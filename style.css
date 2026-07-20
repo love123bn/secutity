@@ -44,17 +44,42 @@ body {
 
 /* Phone container acts as the container query boundary */
 .phone-container {
-    container-type: inline-size;
+    container-type: size;
     position: relative;
+    background: #ffffff; /* White background revealed during pull/overscroll */
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Hide scrollbars for app-like look */
+}
+
+.phone-container::-webkit-scrollbar {
+    display: none;
+}
+
+.status-bar-mock {
+    width: 100%;
+    height: 5cqh; /* 5% of the phone container height */
+    background-color: #ffffff;
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+.phone-content {
+    width: 100%;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     background: linear-gradient(to bottom, #181c27 0%, #242938 100%);
-    overflow-y: auto;
-    overflow-x: hidden;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    -webkit-overflow-scrolling: touch;
+    position: relative;
+    will-change: transform;
+}
+
+.phone-content.snapping {
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 /* Desktop: lock aspect ratio to 1320x2868 */
@@ -69,6 +94,9 @@ body {
 
 /* Mobile: take full screen */
 @media (max-width: 600px) {
+    body {
+        background: #ffffff; /* Ensure native device overscroll at body level is white */
+    }
     .phone-container {
         width: 100vw;
         height: 100vh;
@@ -95,8 +123,8 @@ body {
 
 /* Content blocks positioning */
 .header-container {
-    margin-top: 8.0cqw; /* 105px / 1320px */
-    margin-bottom: 4.0cqw; /* 53px / 1320px */
+    margin-top: 6.0cqw; /* Centered between top status bar and yellow card header */
+    margin-bottom: 6.0cqw;
     text-align: center;
     z-index: 1;
     position: relative;
@@ -111,10 +139,10 @@ body {
 }
 
 .compliance-card {
-    width: 86.36cqw; /* 1140px / 1320px */
-    height: 107.23cqw; /* Height scaled to ensure 1:1 body ratio (86.36cqw height) with 51/211 header ratio */
+    width: 82.04cqw; /* 86.36cqw * 0.95 */
+    height: 101.87cqw; /* Height scaled by 0.95 */
     background: transparent;
-    border-radius: 2.42cqw; /* 32px / 1320px */
+    border-radius: 2.30cqw; /* 2.42cqw * 0.95 */
     position: relative;
     z-index: 1;
     margin-bottom: 0;
@@ -133,10 +161,10 @@ body {
     justify-content: center;
     align-items: center;
     font-weight: 400;
-    font-size: 3.79cqw; /* Matched to the clock text font-size below it */
+    font-size: 3.60cqw; /* 3.79cqw * 0.95 */
     letter-spacing: 0.05cqw;
-    border-top-left-radius: 2.42cqw;
-    border-top-right-radius: 2.42cqw;
+    border-top-left-radius: 2.30cqw;
+    border-top-right-radius: 2.30cqw;
     position: relative;
 }
 
@@ -145,30 +173,30 @@ body {
 .card-header::after {
     content: '';
     position: absolute;
-    width: 3.03cqw; /* 40px / 1320px */
-    height: 3.03cqw;
+    width: 2.88cqw; /* 3.03cqw * 0.95 */
+    height: 2.88cqw;
     background-color: #1a1d29; /* Blends with gradient background */
     border-radius: 50%;
-    bottom: -1.515cqw;
+    bottom: -1.44cqw;
     z-index: 2;
 }
 
 .card-header::before {
-    left: -1.515cqw;
+    left: -1.44cqw;
 }
 
 .card-header::after {
-    right: -1.515cqw;
+    right: -1.44cqw;
 }
 
 /* Card Body */
 .card-body {
     background-color: var(--card-bg);
-    border-bottom-left-radius: 2.42cqw;
-    border-bottom-right-radius: 2.42cqw;
+    border-bottom-left-radius: 2.30cqw;
+    border-bottom-right-radius: 2.30cqw;
     height: calc(100% * 211 / 262); /* Body is 211px of 262px card height */
     flex-grow: 1;
-    padding: 5.0cqw 6.06cqw 5.0cqw 6.06cqw; /* Even padding T/B */
+    padding: 4.75cqw 5.76cqw 4.75cqw 5.76cqw; /* Even padding T/B scaled */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -179,18 +207,18 @@ body {
 
 /* Current dynamic clock */
 .current-time {
-    font-size: 3.79cqw; /* 50px / 1320px */
+    font-size: 3.60cqw; /* 3.79cqw * 0.95 */
     font-weight: 500; /* Regular/medium weight, not bold */
     color: #000000;
-    margin-top: 0.75cqw;
+    margin-top: 0.71cqw;
     margin-bottom: 0;
     letter-spacing: 0.05cqw;
 }
 
 /* Circle checkmark */
 .icon-wrapper {
-    width: 21.21cqw; /* 280px / 1320px */
-    height: 21.21cqw;
+    width: 20.15cqw; /* 21.21cqw * 0.95 */
+    height: 20.15cqw;
     background-color: var(--gold-theme);
     border-radius: 50%;
     display: flex;
@@ -201,8 +229,8 @@ body {
 }
 
 .icon-wrapper svg {
-    width: 12.88cqw; /* Made the white checkmark larger */
-    height: 12.88cqw;
+    width: 12.24cqw; /* 12.88cqw * 0.95 */
+    height: 12.24cqw;
     fill: none;
     stroke: #ffffff;
     stroke-width: 3.5;
@@ -220,14 +248,14 @@ body {
 
 /* Status labels */
 .status-title {
-    font-size: 4.24cqw; /* 56px / 1320px */
+    font-size: 4.03cqw; /* 4.24cqw * 0.95 */
     font-weight: 600;
     color: var(--text-title);
-    margin-bottom: 1.2cqw; /* 16px / 1320px */
+    margin-bottom: 1.14cqw; /* 16px / 1320px */
 }
 
 .entry-time {
-    font-size: 3.33cqw; /* 44px / 1320px */
+    font-size: 3.16cqw; /* 3.33cqw * 0.95 */
     color: var(--text-secondary);
     font-weight: 500;
     margin-bottom: 0;
@@ -235,7 +263,7 @@ body {
 
 /* Refresh link */
 .refresh-btn {
-    font-size: 2.88cqw; /* 38px / 1320px */
+    font-size: 2.74cqw; /* 2.88cqw * 0.95 */
     color: var(--text-title);
     text-decoration: none;
     cursor: pointer;
@@ -254,14 +282,14 @@ body {
 
 /* Green status timers */
 .active-status {
-    font-size: 4.54cqw; /* 60px / 1320px */
+    font-size: 4.31cqw; /* 4.54cqw * 0.95 */
     font-weight: 500; /* Regular/medium weight, not bold */
     color: var(--status-green);
-    margin-bottom: 0.91cqw; /* 12px / 1320px */
+    margin-bottom: 0.86cqw; /* 12px / 1320px */
 }
 
 .countdown-timer {
-    font-size: 4.24cqw; /* 56px / 1320px */
+    font-size: 4.03cqw; /* 4.24cqw * 0.95 */
     font-weight: 500; /* Regular/medium weight, not bold */
     color: var(--status-green);
 }

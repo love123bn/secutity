@@ -245,4 +245,80 @@ document.addEventListener('DOMContentLoaded', () => {
             settingsModal.classList.remove('active');
         });
     }
+
+    // Rubber-band drag/swipe effect to reveal white background
+    const phoneContainer = document.getElementById('phoneContainer');
+    const phoneContent = document.getElementById('phoneContent');
+
+    if (phoneContainer && phoneContent) {
+        let isDragging = false;
+        let startY = 0;
+        let startScrollTop = 0;
+        const resistance = 0.35; // Factor for rubber-band pull
+
+        const handleStart = (clientY) => {
+            isDragging = true;
+            startY = clientY;
+            startScrollTop = phoneContainer.scrollTop;
+            phoneContent.classList.remove('snapping');
+        };
+
+        const handleMove = (clientY, event) => {
+            if (!isDragging) return;
+
+            const deltaY = clientY - startY;
+            const maxScroll = phoneContainer.scrollHeight - phoneContainer.clientHeight;
+
+            // Pulling down at the top boundary
+            if (deltaY > 0 && phoneContainer.scrollTop <= 0) {
+                const overscroll = deltaY - startScrollTop;
+                if (overscroll > 0) {
+                    const translation = overscroll * resistance;
+                    phoneContent.style.transform = `translateY(${translation}px)`;
+                    phoneContainer.scrollTop = 0;
+                    if (event.cancelable) event.preventDefault();
+                }
+            } 
+            // Pulling up at the bottom boundary
+            else if (deltaY < 0 && phoneContainer.scrollTop >= maxScroll - 1) {
+                const overscroll = -deltaY - (maxScroll - startScrollTop);
+                if (overscroll > 0) {
+                    const translation = -overscroll * resistance;
+                    phoneContent.style.transform = `translateY(${translation}px)`;
+                    phoneContainer.scrollTop = maxScroll;
+                    if (event.cancelable) event.preventDefault();
+                }
+            }
+        };
+
+        const handleEnd = () => {
+            if (!isDragging) return;
+            isDragging = false;
+            phoneContent.classList.add('snapping');
+            phoneContent.style.transform = 'translateY(0)';
+        };
+
+        // Touch Events
+        phoneContainer.addEventListener('touchstart', (e) => {
+            handleStart(e.touches[0].clientY);
+        }, { passive: true });
+
+        phoneContainer.addEventListener('touchmove', (e) => {
+            handleMove(e.touches[0].clientY, e);
+        }, { passive: false });
+
+        phoneContainer.addEventListener('touchend', handleEnd);
+        phoneContainer.addEventListener('touchcancel', handleEnd);
+
+        // Mouse Events
+        phoneContainer.addEventListener('mousedown', (e) => {
+            handleStart(e.clientY);
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            handleMove(e.clientY, e);
+        });
+
+        window.addEventListener('mouseup', handleEnd);
+    }
 });

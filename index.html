@@ -10,53 +10,58 @@
 <body>
     <div class="page-wrapper">
         <div class="phone-container" id="phoneContainer">
-            <!-- Background overlay for the generated isometric security image -->
-            <div class="bg-overlay" id="bgOverlay"></div>
+            <div class="phone-content" id="phoneContent">
+                <!-- Status bar mock (white strip of 1/50 height) -->
+                <div class="status-bar-mock"></div>
 
-            <!-- Top user identifier -->
-            <header class="header-container">
-                <h1 class="user-id" id="userId">N2632049(丁德順)</h1>
-            </header>
+                <!-- Background overlay for the generated isometric security image -->
+                <div class="bg-overlay" id="bgOverlay"></div>
 
-            <!-- Compliance Check Card -->
-            <main class="compliance-card">
-                <div class="card-header" id="cardHeader">
-                    您的设备已符合安全规范
-                </div>
-                
-                <div class="card-body">
-                    <!-- Ticking clock (shows current time) -->
-                    <div class="current-time" id="currentTime">
-                        2026-7-2 07:53:41
-                    </div>
-                    
-                    <!-- Compliance checkmark logo -->
-                    <div class="icon-wrapper">
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M20 6L9 17L4 12" />
-                        </svg>
-                    </div>
-                    
-                    <!-- Status indicators grouped -->
-                    <div class="status-group">
-                        <h2 class="status-title">Successful entry</h2>
-                        <div class="entry-time" id="entryTime">2026-07-02 07:52</div>
-                    </div>
-                    
-                    <button class="refresh-btn" id="refreshBtn">刷新二维码</button>
-                    
-                    <!-- Timer indicators grouped -->
-                    <div class="timer-group">
-                        <div class="active-status">已生效</div>
-                        <div class="countdown-timer" id="countdownTimer">00:59</div>
-                    </div>
-                </div>
-            </main>
+                <!-- Top user identifier -->
+                <header class="header-container">
+                    <h1 class="user-id" id="userId">N2632049(丁德順)</h1>
+                </header>
 
-            <!-- Dynamic warning / instructions at footer -->
-            <footer class="footer-text" id="footerText">
-                尊敬的員工您好，您已進入訊越涉密區域，出於安全考慮，您的手機攝像頭將被禁止使用，感謝您的配合。
-            </footer>
+                <!-- Compliance Check Card -->
+                <main class="compliance-card">
+                    <div class="card-header" id="cardHeader">
+                        您的设备已符合安全规范
+                    </div>
+                    
+                    <div class="card-body">
+                        <!-- Ticking clock (shows current time) -->
+                        <div class="current-time" id="currentTime">
+                            2026-7-2 07:53:41
+                        </div>
+                        
+                        <!-- Compliance checkmark logo -->
+                        <div class="icon-wrapper">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 6L9 17L4 12" />
+                            </svg>
+                        </div>
+                        
+                        <!-- Status indicators grouped -->
+                        <div class="status-group">
+                            <h2 class="status-title">Successful entry</h2>
+                            <div class="entry-time" id="entryTime">2026-07-02 07:52</div>
+                        </div>
+                        
+                        <button class="refresh-btn" id="refreshBtn">刷新二维码</button>
+                        
+                        <!-- Timer indicators grouped -->
+                        <div class="timer-group">
+                            <div class="active-status">已生效</div>
+                            <div class="countdown-timer" id="countdownTimer">00:59</div>
+                        </div>
+                    </div>
+                </main>
+
+                <!-- Dynamic warning / instructions at footer -->
+                <footer class="footer-text" id="footerText">
+                    尊敬的員工您好，您已進入訊越涉密區域，出於安全考慮，您的手機攝像頭將被禁止使用，感謝您的配合。
+                </footer>
+            </div>
         </div>
     </div>
 
