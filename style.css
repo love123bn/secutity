@@ -103,17 +103,16 @@ body {
 }
 
 .user-id {
-    color: var(--gold-text);
-    font-size: 3.64cqw; /* 48px / 1320px */
+    color: #ffd666; /* Brighter yellow */
+    font-size: 4.85cqw; /* Increased by 2 sizes */
     font-weight: 500;
     letter-spacing: 0.08cqw;
     text-shadow: 0 0.15cqw 0.3cqw rgba(0,0,0,0.3);
 }
 
-/* Card layout */
 .compliance-card {
     width: 86.36cqw; /* 1140px / 1320px */
-    height: 96.6cqw; /* Exactly 1/7 header + 6/7 body ratio total height */
+    height: 107.23cqw; /* Height scaled to ensure 1:1 body ratio (86.36cqw height) with 51/211 header ratio */
     background: transparent;
     border-radius: 2.42cqw; /* 32px / 1320px */
     position: relative;
@@ -128,7 +127,7 @@ body {
     background-color: var(--gold-theme);
     color: #ffffff;
     text-align: center;
-    height: 13.8cqw; /* Exactly 1/7 of 96.6cqw */
+    height: calc(100% * 51 / 262); /* Header is 51px of 262px card height */
     flex-shrink: 0;
     display: flex;
     justify-content: center;
@@ -167,7 +166,7 @@ body {
     background-color: var(--card-bg);
     border-bottom-left-radius: 2.42cqw;
     border-bottom-right-radius: 2.42cqw;
-    height: 82.8cqw; /* Exactly 6/7 of 96.6cqw */
+    height: calc(100% * 211 / 262); /* Body is 211px of 262px card height */
     flex-grow: 1;
     padding: 5.0cqw 6.06cqw 5.0cqw 6.06cqw; /* Even padding T/B */
     display: flex;
@@ -256,14 +255,14 @@ body {
 /* Green status timers */
 .active-status {
     font-size: 4.54cqw; /* 60px / 1320px */
-    font-weight: 600;
+    font-weight: 500; /* Regular/medium weight, not bold */
     color: var(--status-green);
     margin-bottom: 0.91cqw; /* 12px / 1320px */
 }
 
 .countdown-timer {
     font-size: 4.24cqw; /* 56px / 1320px */
-    font-weight: 600;
+    font-weight: 500; /* Regular/medium weight, not bold */
     color: var(--status-green);
 }
 
