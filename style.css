@@ -60,7 +60,7 @@ body {
 
 .status-bar-mock {
     width: 100%;
-    height: calc(100cqh / 70); /* Exactly 1/70 of the phone container height */
+    height: calc(100cqh / 100); /* Exactly 1/100 of the phone container height */
     background-color: #ffffff;
     z-index: 10;
     flex-shrink: 0;
