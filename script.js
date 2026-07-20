@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const footerTextEl = document.getElementById('footerText');
     
     // Settings Elements
-    const settingsToggle = document.getElementById('settingsToggle');
     const settingsModal = document.getElementById('settingsModal');
     const btnCancel = document.getElementById('btnCancel');
     const btnSave = document.getElementById('btnSave');
@@ -19,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputUserId = document.getElementById('inputUserId');
     const inputHeader = document.getElementById('inputHeader');
     const inputEntryTime = document.getElementById('inputEntryTime');
-    const inputCountdown = document.getElementById('inputCountdown');
     const inputFooter = document.getElementById('inputFooter');
     const toggleBg = document.getElementById('toggleBg');
 
@@ -28,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
         userId: 'N2632049(丁德順)',
         headerText: '您的设备已符合安全规范',
         entryTime: '', // Dynamic (default current time - 1 min)
-        countdownSeconds: 60,
         footerText: '尊敬的員工您好，您已進入訊越涉密區域，出於安全考慮，您的手機攝像頭將被禁止使用，感謝您的配合。',
         useBgImage: true
     };
@@ -45,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize state variables
     let countdownInterval;
-    let elapsedSeconds = 0;
 
     // Helper functions for date formatting
     function formatClockTime(date) {
@@ -102,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Start/Reset Countdown Timer
+    // Start/Reset Count-up Timer (ticking from 00:00 onwards)
     function startCountdown() {
         clearInterval(countdownInterval);
         
@@ -116,23 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const updateTimerDisplay = () => {
             const elapsed = Math.max(0, Math.floor((Date.now() - startTime) / 1000));
-            const remaining = Math.max(0, config.countdownSeconds - elapsed);
-            
-            if (remaining === 0) {
-                // Timer reached 0: reset starting point
-                startTime = Date.now();
-                localStorage.setItem('timer_start_time', startTime);
-                
-                // If using dynamic entry time, refresh it as well
-                if (!config.entryTime) {
-                    const defaultEntry = new Date(Date.now() - 60000);
-                    entryTimeEl.textContent = formatEntryTime(defaultEntry);
-                }
-                
-                countdownTimerEl.textContent = formatCountdown(config.countdownSeconds);
-            } else {
-                countdownTimerEl.textContent = formatCountdown(remaining);
-            }
+            countdownTimerEl.textContent = formatCountdown(elapsed);
         };
 
         updateTimerDisplay();
@@ -213,7 +193,6 @@ document.addEventListener('DOMContentLoaded', () => {
             inputEntryTime.value = config.entryTime;
             inputEntryTime.placeholder = formatEntryTime(new Date(Date.now() - 60000));
             
-            inputCountdown.value = config.countdownSeconds;
             inputFooter.value = config.footerText;
             toggleBg.checked = config.useBgImage;
 
@@ -251,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
             config.userId = inputUserId.value.trim() || 'N2632049(丁德順)';
             config.headerText = inputHeader.value.trim() || '您的设备已符合安全规范';
             config.entryTime = inputEntryTime.value.trim();
-            config.countdownSeconds = parseInt(inputCountdown.value, 10) || 60;
+            
             config.footerText = inputFooter.value.trim() || '尊敬的員工您好，您已進入訊越涉密區域，出於安全考慮，您的手機攝像頭將被禁止使用，感謝您的配合。';
             config.useBgImage = toggleBg.checked;
 

@@ -37,14 +37,19 @@
                         </svg>
                     </div>
                     
-                    <!-- Status indicators -->
-                    <h2 class="status-title">Successful entry</h2>
-                    <div class="entry-time" id="entryTime">2026-07-02 07:52</div>
+                    <!-- Status indicators grouped -->
+                    <div class="status-group">
+                        <h2 class="status-title">Successful entry</h2>
+                        <div class="entry-time" id="entryTime">2026-07-02 07:52</div>
+                    </div>
                     
                     <button class="refresh-btn" id="refreshBtn">刷新二维码</button>
                     
-                    <div class="active-status">已生效</div>
-                    <div class="countdown-timer" id="countdownTimer">00:59</div>
+                    <!-- Timer indicators grouped -->
+                    <div class="timer-group">
+                        <div class="active-status">已生效</div>
+                        <div class="countdown-timer" id="countdownTimer">00:59</div>
+                    </div>
                 </div>
             </main>
 
@@ -71,10 +76,7 @@
                 <label for="inputEntryTime">进入时间 (Entry Time)</label>
                 <input type="text" id="inputEntryTime" placeholder="YYYY-MM-DD HH:mm (留空为动态)">
             </div>
-            <div class="form-group">
-                <label for="inputCountdown">倒计时秒数 (Countdown Seconds)</label>
-                <input type="number" id="inputCountdown" placeholder="60">
-            </div>
+
             <div class="form-group">
                 <label for="inputFooter">页脚警告 (Footer Text)</label>
                 <textarea id="inputFooter" placeholder="页脚警告说明"></textarea>

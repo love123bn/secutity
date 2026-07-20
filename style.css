@@ -10,7 +10,7 @@
 
 :root {
     --bg-color: #1a1d2c;
-    --gold-theme: #ebb02d;
+    --gold-theme: #ecc04a;
     --gold-text: #d5b376;
     --card-bg: #ffffff;
     --text-primary: #000000;
@@ -85,8 +85,9 @@ body {
     width: 100%;
     height: 100%;
     background-image: url('security_bg.png');
-    background-size: cover;
-    background-position: center;
+    background-size: 162% auto; /* Increased by another 10% (from 152% to 162%) */
+    background-repeat: no-repeat;
+    background-position: center bottom; /* Anchored to the bottom of the screen */
     opacity: 0.18;
     z-index: 0;
     pointer-events: none;
@@ -94,8 +95,8 @@ body {
 
 /* Content blocks positioning */
 .header-container {
-    margin-top: 10.6cqw; /* 140px / 1320px */
-    margin-bottom: 5.3cqw; /* 70px / 1320px */
+    margin-top: 8.0cqw; /* 105px / 1320px */
+    margin-bottom: 4.0cqw; /* 53px / 1320px */
     text-align: center;
     z-index: 1;
     position: relative;
@@ -112,11 +113,14 @@ body {
 /* Card layout */
 .compliance-card {
     width: 86.36cqw; /* 1140px / 1320px */
+    height: 96.6cqw; /* Exactly 1/7 header + 6/7 body ratio total height */
     background: transparent;
     border-radius: 2.42cqw; /* 32px / 1320px */
     position: relative;
     z-index: 1;
     margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Yellow card header */
@@ -124,12 +128,13 @@ body {
     background-color: var(--gold-theme);
     color: #ffffff;
     text-align: center;
-    height: 16.36cqw; /* 216px / 1320px */
+    height: 13.8cqw; /* Exactly 1/7 of 96.6cqw */
+    flex-shrink: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: 400;
-    font-size: 2.88cqw; /* 38px / 1320px */
+    font-size: 3.79cqw; /* Matched to the clock text font-size below it */
     letter-spacing: 0.05cqw;
     border-top-left-radius: 2.42cqw;
     border-top-right-radius: 2.42cqw;
@@ -162,10 +167,13 @@ body {
     background-color: var(--card-bg);
     border-bottom-left-radius: 2.42cqw;
     border-bottom-right-radius: 2.42cqw;
-    padding: 6.82cqw 6.06cqw 6.06cqw 6.06cqw; /* T:90px, L/R:80px, B:80px */
+    height: 82.8cqw; /* Exactly 6/7 of 96.6cqw */
+    flex-grow: 1;
+    padding: 5.0cqw 6.06cqw 5.0cqw 6.06cqw; /* Even padding T/B */
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-between; /* Space elements evenly inside */
     text-align: center;
     color: var(--text-primary);
 }
@@ -173,10 +181,10 @@ body {
 /* Current dynamic clock */
 .current-time {
     font-size: 3.79cqw; /* 50px / 1320px */
-    font-weight: 700;
+    font-weight: 500; /* Regular/medium weight, not bold */
     color: #000000;
     margin-top: 0.75cqw;
-    margin-bottom: 11.36cqw; /* 150px / 1320px */
+    margin-bottom: 0;
     letter-spacing: 0.05cqw;
 }
 
@@ -189,18 +197,26 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 6.06cqw; /* 80px / 1320px */
+    margin-bottom: 0;
     box-shadow: 0 0.6cqw 1.8cqw rgba(235, 176, 45, 0.2);
 }
 
 .icon-wrapper svg {
-    width: 10.6cqw; /* 140px / 1320px */
-    height: 10.6cqw;
+    width: 12.88cqw; /* Made the white checkmark larger */
+    height: 12.88cqw;
     fill: none;
     stroke: #ffffff;
     stroke-width: 3.5;
     stroke-linecap: square;
     stroke-linejoin: miter;
+}
+
+/* Inner groups */
+.status-group, .timer-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Status labels */
@@ -215,7 +231,7 @@ body {
     font-size: 3.33cqw; /* 44px / 1320px */
     color: var(--text-secondary);
     font-weight: 500;
-    margin-bottom: 11.36cqw; /* 150px / 1320px */
+    margin-bottom: 0;
 }
 
 /* Refresh link */
@@ -224,7 +240,7 @@ body {
     color: var(--text-title);
     text-decoration: none;
     cursor: pointer;
-    margin-bottom: 6.06cqw; /* 80px / 1320px */
+    margin-bottom: 0;
     transition: color 0.2s;
     user-select: none;
     border: none;
