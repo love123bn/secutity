@@ -132,15 +132,15 @@ body {
 
 .user-id {
     color: #ffd666; /* Brighter yellow */
-    font-size: 4.85cqw; /* Increased by 2 sizes */
+    font-size: 4.45cqw; /* Adjusted size */
     font-weight: 500;
     letter-spacing: 0.08cqw;
     text-shadow: 0 0.15cqw 0.3cqw rgba(0,0,0,0.3);
 }
 
 .compliance-card {
-    width: 82.04cqw; /* 86.36cqw * 0.95 */
-    height: 101.87cqw; /* Height scaled by 0.95 */
+    width: 77.0cqw; /* Slightly smaller width */
+    height: 95.6cqw; /* Slightly smaller height */
     background: transparent;
     border-radius: 2.30cqw; /* 2.42cqw * 0.95 */
     position: relative;

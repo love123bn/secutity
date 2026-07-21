@@ -18,8 +18,10 @@
                 <div class="bg-overlay" id="bgOverlay"></div>
 
                 <!-- Top user identifier -->
-                <header class="header-container">
-                    <h1 class="user-id" id="userId">N2632049(丁德順)</h1>
+                <header class="header-container" id="userIdContainer" title="Nhấp 2 lần để đổi tên và mã nhân viên" style="cursor: pointer;">
+                    <h1 class="user-id">
+                        <span id="empId">N2632049</span><span id="empName">(丁德順)</span>
+                    </h1>
                 </header>
 
                 <!-- Compliance Check Card -->
@@ -65,37 +67,22 @@
         </div>
     </div>
 
-    <!-- Settings Modal -->
-    <div class="settings-modal" id="settingsModal">
-        <div class="settings-content">
-            <h3>配置选项 (Settings)</h3>
-            <div class="form-group">
-                <label for="inputUserId">员工工号 (User ID)</label>
-                <input type="text" id="inputUserId" placeholder="N2632049(丁德順)">
-            </div>
-            <div class="form-group">
-                <label for="inputHeader">卡片页眉 (Card Header)</label>
-                <input type="text" id="inputHeader" placeholder="您的设备已符合安全规范">
-            </div>
-            <div class="form-group">
-                <label for="inputEntryTime">进入时间 (Entry Time)</label>
-                <input type="text" id="inputEntryTime" placeholder="YYYY-MM-DD HH:mm (留空为动态)">
-            </div>
 
+    <!-- Edit User ID Modal -->
+    <div class="settings-modal" id="editUserModal">
+        <div class="settings-content">
+            <h3>Đổi mã nhân viên & Tên</h3>
             <div class="form-group">
-                <label for="inputFooter">页脚警告 (Footer Text)</label>
-                <textarea id="inputFooter" placeholder="页脚警告说明"></textarea>
+                <label for="inputEditEmpId">Mã nhân viên (User ID)</label>
+                <input type="text" id="inputEditEmpId" placeholder="N2632049">
             </div>
-            <div class="toggle-switch">
-                <span>使用背景图片 (Background Image)</span>
-                <label class="switch">
-                    <input type="checkbox" id="toggleBg" checked>
-                    <span class="slider"></span>
-                </label>
+            <div class="form-group">
+                <label for="inputEditEmpName">Họ và tên (Name)</label>
+                <input type="text" id="inputEditEmpName" placeholder="丁德順">
             </div>
             <div class="settings-actions">
-                <button class="btn btn-cancel" id="btnCancel">取消</button>
-                <button class="btn btn-save" id="btnSave">保存</button>
+                <button class="btn btn-cancel" id="btnEditCancel">Hủy</button>
+                <button class="btn btn-save" id="btnEditSave">Lưu</button>
             </div>
         </div>
     </div>

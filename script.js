@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
-    const userIdEl = document.getElementById('userId');
+    const userIdContainer = document.getElementById('userIdContainer');
+    const empIdEl = document.getElementById('empId');
+    const empNameEl = document.getElementById('empName');
     const cardHeaderEl = document.getElementById('cardHeader');
     const currentTimeEl = document.getElementById('currentTime');
     const entryTimeEl = document.getElementById('entryTime');
@@ -9,24 +11,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const footerTextEl = document.getElementById('footerText');
     
     // Settings Elements
-    const settingsModal = document.getElementById('settingsModal');
-    const btnCancel = document.getElementById('btnCancel');
-    const btnSave = document.getElementById('btnSave');
     const bgOverlay = document.getElementById('bgOverlay');
-    
-    // Settings Input Elements
-    const inputUserId = document.getElementById('inputUserId');
-    const inputHeader = document.getElementById('inputHeader');
-    const inputEntryTime = document.getElementById('inputEntryTime');
-    const inputFooter = document.getElementById('inputFooter');
-    const toggleBg = document.getElementById('toggleBg');
+
+    // Edit User ID Elements
+    const editUserModal = document.getElementById('editUserModal');
+    const inputEditEmpId = document.getElementById('inputEditEmpId');
+    const inputEditEmpName = document.getElementById('inputEditEmpName');
+    const btnEditCancel = document.getElementById('btnEditCancel');
+    const btnEditSave = document.getElementById('btnEditSave');
 
     // Default configuration values
     let config = {
-        userId: 'N2632049(丁德順)',
+        empId: 'N2632049',
+        empName: '丁德順',
         headerText: '您的设备已符合安全规范',
         entryTime: '', // Dynamic (default current time - 1 min)
-        footerText: '尊敬的員工您好，您已進入訊越涉密區域，出於安全考慮，您的手機攝像頭將被禁止使用，感謝您的配合。',
+        footerText: '尊敬的員工您好，您已進入訊越涉密区域，出於安全考慮，您的手機攝像頭將被禁止使用，感謝您的配合。',
         useBgImage: true
     };
 
@@ -34,7 +34,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedConfig = localStorage.getItem('security_verification_config');
     if (savedConfig) {
         try {
-            config = { ...config, ...JSON.parse(savedConfig) };
+            const parsed = JSON.parse(savedConfig);
+            // Backward compatibility for single userId field
+            if (parsed.userId && !parsed.empId) {
+                const match = parsed.userId.match(/^([^(]+)(?:\((.*)\))?$/);
+                if (match) {
+                    parsed.empId = match[1].trim();
+                    parsed.empName = match[2] ? match[2].trim() : '';
+                } else {
+                    parsed.empId = parsed.userId;
+                    parsed.empName = '';
+                }
+            }
+            config = { ...config, ...parsed };
         } catch (e) {
             console.error('Failed to parse saved config', e);
         }
@@ -84,7 +96,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Set initial UI elements based on config
     function applyConfig() {
-        userIdEl.textContent = config.userId;
+        if (empIdEl) empIdEl.textContent = config.empId;
+        if (empNameEl) empNameEl.textContent = config.empName ? `(${config.empName})` : '';
         cardHeaderEl.textContent = config.headerText;
         footerTextEl.textContent = config.footerText;
         
@@ -110,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(countdownInterval);
         
         let startTime = localStorage.getItem('timer_start_time');
-        if (!startTime) {
+        if (!startTime || isNaN(parseInt(startTime, 10))) {
             startTime = Date.now();
             localStorage.setItem('timer_start_time', startTime);
         } else {
@@ -183,73 +196,82 @@ document.addEventListener('DOMContentLoaded', () => {
             const tapLength = currentTime - lastTap;
             if (tapLength < 300 && tapLength > 0) {
                 resetTimer();
-                e.preventDefault(); // Prevent zoom on tap
+                e.preventDefault();
             }
             lastTap = currentTime;
         });
     }
 
     // Modal Interaction (Hidden trigger: Double click/tap on User ID)
-    if (userIdEl && settingsModal) {
-        const openSettings = () => {
-            // Load config into inputs
-            inputUserId.value = config.userId;
-            inputHeader.value = config.headerText;
-            
-            // If entryTime is blank, show empty to imply dynamic "Current time - 1 min"
-            inputEntryTime.value = config.entryTime;
-            inputEntryTime.placeholder = formatEntryTime(new Date(Date.now() - 60000));
-            
-            inputFooter.value = config.footerText;
-            toggleBg.checked = config.useBgImage;
-
-            settingsModal.classList.add('active');
+    if (userIdContainer && editUserModal) {
+        const openEditUserModal = () => {
+            if (inputEditEmpId && inputEditEmpName) {
+                inputEditEmpId.value = config.empId;
+                inputEditEmpName.value = config.empName;
+                editUserModal.classList.add('active');
+                setTimeout(() => {
+                    inputEditEmpId.focus();
+                    inputEditEmpId.select();
+                }, 100);
+            }
         };
 
-        // Desktop double click on user ID
-        userIdEl.addEventListener('dblclick', openSettings);
+        const closeEditUserModal = () => {
+            editUserModal.classList.remove('active');
+        };
 
-        // Mobile double tap on user ID
+        const saveEditUserId = () => {
+            if (inputEditEmpId && inputEditEmpName) {
+                config.empId = inputEditEmpId.value.trim() || 'N2632049';
+                config.empName = inputEditEmpName.value.trim() || '丁德順';
+                localStorage.setItem('security_verification_config', JSON.stringify(config));
+                applyConfig();
+                closeEditUserModal();
+            }
+        };
+
+        if (btnEditCancel) {
+            btnEditCancel.addEventListener('click', closeEditUserModal);
+        }
+
+        if (btnEditSave) {
+            btnEditSave.addEventListener('click', saveEditUserId);
+        }
+
+        editUserModal.addEventListener('click', (e) => {
+            if (e.target === editUserModal) {
+                closeEditUserModal();
+            }
+        });
+
+        const handleEditKeydown = (e) => {
+            if (e.key === 'Enter') {
+                saveEditUserId();
+            } else if (e.key === 'Escape') {
+                closeEditUserModal();
+            }
+        };
+
+        if (inputEditEmpId) {
+            inputEditEmpId.addEventListener('keydown', handleEditKeydown);
+        }
+        if (inputEditEmpName) {
+            inputEditEmpName.addEventListener('keydown', handleEditKeydown);
+        }
+
+        // Desktop double click on user ID container to open edit modal
+        userIdContainer.addEventListener('dblclick', openEditUserModal);
+
+        // Mobile double tap on user ID container to open edit modal
         let lastHeaderTap = 0;
-        userIdEl.addEventListener('touchend', (e) => {
+        userIdContainer.addEventListener('touchend', (e) => {
             const currentTime = Date.now();
             const tapLength = currentTime - lastHeaderTap;
             if (tapLength < 300 && tapLength > 0) {
-                openSettings();
+                openEditUserModal();
                 e.preventDefault();
             }
             lastHeaderTap = currentTime;
-        });
-
-        btnCancel.addEventListener('click', () => {
-            settingsModal.classList.remove('active');
-        });
-
-        // Close on background click
-        settingsModal.addEventListener('click', (e) => {
-            if (e.target === settingsModal) {
-                settingsModal.classList.remove('active');
-            }
-        });
-
-        btnSave.addEventListener('click', () => {
-            // Save values from inputs
-            config.userId = inputUserId.value.trim() || 'N2632049(丁德順)';
-            config.headerText = inputHeader.value.trim() || '您的设备已符合安全规范';
-            config.entryTime = inputEntryTime.value.trim();
-            
-            config.footerText = inputFooter.value.trim() || '尊敬的員工您好，您已進入訊越涉密區域，出於安全考慮，您的手機攝像頭將被禁止使用，感謝您的配合。';
-            config.useBgImage = toggleBg.checked;
-
-            // Save to LocalStorage
-            localStorage.setItem('security_verification_config', JSON.stringify(config));
-
-            // Apply changes
-            applyConfig();
-            startCountdown();
-
-            // Close modal
-            settingsModal.classList.remove('active');
         });
     }
 
