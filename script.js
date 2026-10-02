@@ -206,6 +206,79 @@ document.addEventListener('DOMContentLoaded', () => {
         startCountdown();
     });
 
+    /**
+     * Unified double-tap and double-click handler for iOS Safari and Desktop
+     * - Prevents iOS native double-tap to zoom
+     * - Prevents synthetic dblclick double-triggering (revert bug)
+     * - Filters out touch drags/scrolls
+     */
+    function attachDoubleTapHandler(element, callback, maxDelay = 380) {
+        if (!element) return;
+
+        let lastTapTime = 0;
+        let lastTriggerTime = 0;
+        let startX = 0;
+        let startY = 0;
+        let isTouchMove = false;
+
+        const executeAction = (e) => {
+            const now = Date.now();
+            // Debounce: prevent executing again within 450ms (kills synthetic dblclick after touchend on iOS)
+            if (now - lastTriggerTime < 450) {
+                if (e && e.preventDefault) e.preventDefault();
+                if (e && e.stopPropagation) e.stopPropagation();
+                return;
+            }
+            lastTriggerTime = now;
+            if (e && e.preventDefault) e.preventDefault();
+            if (e && e.stopPropagation) e.stopPropagation();
+            callback(e);
+        };
+
+        // Mobile touch handling
+        element.addEventListener('touchstart', (e) => {
+            if (e.touches && e.touches.length === 1) {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                isTouchMove = false;
+            }
+        }, { passive: true });
+
+        element.addEventListener('touchmove', (e) => {
+            if (e.touches && e.touches.length === 1) {
+                const diffX = Math.abs(e.touches[0].clientX - startX);
+                const diffY = Math.abs(e.touches[0].clientY - startY);
+                if (diffX > 10 || diffY > 10) {
+                    isTouchMove = true;
+                }
+            }
+        }, { passive: true });
+
+        element.addEventListener('touchend', (e) => {
+            if (isTouchMove) {
+                lastTapTime = 0;
+                return;
+            }
+
+            const now = Date.now();
+            const tapLength = now - lastTapTime;
+
+            if (tapLength > 40 && tapLength < maxDelay) {
+                // Double tap detected!
+                lastTapTime = 0;
+                executeAction(e);
+                return;
+            }
+
+            lastTapTime = now;
+        }, { passive: false });
+
+        // Desktop double click listener (and fallback for mouse users)
+        element.addEventListener('dblclick', (e) => {
+            executeAction(e);
+        });
+    }
+
     // Double click or double tap on checkmark icon to reset start time to 0
     const checkmarkWrapper = document.querySelector('.icon-wrapper');
     if (checkmarkWrapper) {
@@ -224,63 +297,20 @@ document.addEventListener('DOMContentLoaded', () => {
             startCountdown();
         };
 
-        // For desktop double click
-        checkmarkWrapper.addEventListener('dblclick', resetTimer);
-
-        // For mobile double tap (touchscreen support)
-        let lastTap = 0;
-        checkmarkWrapper.addEventListener('touchend', (e) => {
-            const currentTime = Date.now();
-            const tapLength = currentTime - lastTap;
-            if (tapLength < 300 && tapLength > 0) {
-                resetTimer();
-                e.preventDefault();
-            }
-            lastTap = currentTime;
-        });
+        attachDoubleTapHandler(checkmarkWrapper, resetTimer);
     }
 
     // Double click or double tap on card header ("您的设备已符合安全规范") to toggle between Entry mode and QR mode
     if (cardHeaderEl) {
-        // For desktop double click
-        cardHeaderEl.addEventListener('dblclick', (e) => {
-            e.preventDefault();
+        attachDoubleTapHandler(cardHeaderEl, () => {
             toggleCardMode();
-        });
-
-        // For mobile double tap (touchscreen support)
-        let lastHeaderTap = 0;
-        cardHeaderEl.addEventListener('touchend', (e) => {
-            const currentTime = Date.now();
-            const tapLength = currentTime - lastHeaderTap;
-            if (tapLength < 350 && tapLength > 40) {
-                toggleCardMode();
-                e.preventDefault();
-                lastHeaderTap = 0;
-                return;
-            }
-            lastHeaderTap = currentTime;
         });
     }
 
     // Also allow double click or double tap on QR code to toggle back
     if (qrWrapper) {
-        qrWrapper.addEventListener('dblclick', (e) => {
-            e.preventDefault();
+        attachDoubleTapHandler(qrWrapper, () => {
             toggleCardMode();
-        });
-
-        let lastQrTap = 0;
-        qrWrapper.addEventListener('touchend', (e) => {
-            const currentTime = Date.now();
-            const tapLength = currentTime - lastQrTap;
-            if (tapLength < 350 && tapLength > 40) {
-                toggleCardMode();
-                e.preventDefault();
-                lastQrTap = 0;
-                return;
-            }
-            lastQrTap = currentTime;
         });
     }
 
@@ -341,20 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
             inputEditEmpName.addEventListener('keydown', handleEditKeydown);
         }
 
-        // Desktop double click on user ID container to open edit modal
-        userIdContainer.addEventListener('dblclick', openEditUserModal);
-
-        // Mobile double tap on user ID container to open edit modal
-        let lastHeaderTap = 0;
-        userIdContainer.addEventListener('touchend', (e) => {
-            const currentTime = Date.now();
-            const tapLength = currentTime - lastHeaderTap;
-            if (tapLength < 300 && tapLength > 0) {
-                openEditUserModal();
-                e.preventDefault();
-            }
-            lastHeaderTap = currentTime;
-        });
+        attachDoubleTapHandler(userIdContainer, openEditUserModal);
     }
 
     // Rubber-band drag/swipe effect to reveal white background
@@ -432,4 +449,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         window.addEventListener('mouseup', handleEnd);
     }
+
+    // Global prevention of iOS Safari double-tap to zoom
+    let lastGlobalTouch = 0;
+    document.addEventListener('touchend', (e) => {
+        const now = Date.now();
+        if (now - lastGlobalTouch <= 350) {
+            const targetTag = e.target ? e.target.tagName : '';
+            if (targetTag !== 'INPUT' && targetTag !== 'TEXTAREA') {
+                e.preventDefault();
+            }
+        }
+        lastGlobalTouch = now;
+    }, { passive: false });
+
+    // Prevent multi-touch gesture zooming (pinch-to-zoom) on iOS Safari
+    document.addEventListener('gesturestart', (e) => e.preventDefault());
+    document.addEventListener('gesturechange', (e) => e.preventDefault());
+    document.addEventListener('gestureend', (e) => e.preventDefault());
 });
