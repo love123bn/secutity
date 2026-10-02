@@ -28,8 +28,8 @@
                 </header>
 
                 <!-- Compliance Check Card -->
-                <main class="compliance-card">
-                    <div class="card-header" id="cardHeader">
+                <main class="compliance-card" id="complianceCard">
+                    <div class="card-header" id="cardHeader" title="Nhấp 2 lần để chuyển đổi giữa Vào và Ra (Mã QR)" style="cursor: pointer;">
                         您的设备已符合安全规范
                     </div>
                     
@@ -50,6 +50,11 @@
                         <div class="status-group">
                             <h2 class="status-title">Successful entry</h2>
                             <div class="entry-time" id="entryTime">2026-07-02 07:52</div>
+                        </div>
+
+                        <!-- QR Code mock for exit gate -->
+                        <div class="qr-wrapper" id="qrWrapper" title="Nhấp 2 lần để chuyển đổi lại">
+                            <img src="qr_code.png" class="qr-code-img" alt="二维码">
                         </div>
                         
                         <button class="refresh-btn" id="refreshBtn">刷新二维码</button>

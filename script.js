@@ -3,7 +3,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const userIdContainer = document.getElementById('userIdContainer');
     const empIdEl = document.getElementById('empId');
     const empNameEl = document.getElementById('empName');
+    const complianceCard = document.getElementById('complianceCard');
     const cardHeaderEl = document.getElementById('cardHeader');
+    const qrWrapper = document.getElementById('qrWrapper');
     const currentTimeEl = document.getElementById('currentTime');
     const entryTimeEl = document.getElementById('entryTime');
     const refreshBtn = document.getElementById('refreshBtn');
@@ -25,8 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
         empId: 'N2632049',
         empName: '丁德順',
         headerText: '您的设备已符合安全规范',
+        qrHeaderText: '将二维码对准扫描器刷码出场',
         entryTime: '', // Dynamic (default current time - 1 min)
-        footerText: '尊敬的員工您好，您已進入訊越涉密区域，出於安全考慮，您的手機攝像頭將被禁止使用，感謝您的配合。',
+        footerText: '尊敬的員工您好，您已進入訊越涉密區域，出於安全考慮，您的手機攝像頭將被禁止使用，感謝您的配合。',
         useBgImage: true
     };
 
@@ -63,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
         const seconds = String(date.getSeconds()).padStart(2, '0');
-        return `${year}-${month}-${day}  ${hours}:${minutes}:${seconds}`;
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
 
     function formatEntryTime(date) {
@@ -93,12 +96,43 @@ document.addEventListener('DOMContentLoaded', () => {
         const now = new Date();
         currentTimeEl.textContent = formatClockTime(now);
     }
+
+    // Toggle between Entry mode ("您的设备已符合安全规范") and QR mode ("将二维码对准扫描器刷码出场")
+    function setCardMode(isQr, animate = true) {
+        if (!complianceCard) return;
+
+        if (animate) {
+            const bodyEl = document.querySelector('.card-body');
+            if (bodyEl) {
+                bodyEl.style.transition = 'none';
+                bodyEl.style.opacity = '0.5';
+                setTimeout(() => {
+                    bodyEl.style.transition = 'opacity 0.35s ease';
+                    bodyEl.style.opacity = '1';
+                }, 40);
+            }
+        }
+
+        if (isQr) {
+            complianceCard.classList.add('qr-mode');
+            cardHeaderEl.textContent = config.qrHeaderText || '将二维码对准扫描器刷码出场';
+            localStorage.setItem('security_card_mode', 'qr');
+        } else {
+            complianceCard.classList.remove('qr-mode');
+            cardHeaderEl.textContent = config.headerText || '您的设备已符合安全规范';
+            localStorage.setItem('security_card_mode', 'entry');
+        }
+    }
+
+    function toggleCardMode() {
+        const isQr = complianceCard.classList.contains('qr-mode');
+        setCardMode(!isQr, true);
+    }
     
     // Set initial UI elements based on config
     function applyConfig() {
         if (empIdEl) empIdEl.textContent = config.empId;
         if (empNameEl) empNameEl.textContent = config.empName ? `(${config.empName})` : '';
-        cardHeaderEl.textContent = config.headerText;
         footerTextEl.textContent = config.footerText;
         
         // Background toggle
@@ -107,6 +141,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             bgOverlay.style.display = 'none';
         }
+
+        // Apply saved or default card mode (entry vs QR)
+        const savedMode = localStorage.getItem('security_card_mode');
+        setCardMode(savedMode === 'qr', false);
 
         // Apply entry time
         if (config.entryTime) {
@@ -199,6 +237,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
             }
             lastTap = currentTime;
+        });
+    }
+
+    // Double click or double tap on card header ("您的设备已符合安全规范") to toggle between Entry mode and QR mode
+    if (cardHeaderEl) {
+        // For desktop double click
+        cardHeaderEl.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            toggleCardMode();
+        });
+
+        // For mobile double tap (touchscreen support)
+        let lastHeaderTap = 0;
+        cardHeaderEl.addEventListener('touchend', (e) => {
+            const currentTime = Date.now();
+            const tapLength = currentTime - lastHeaderTap;
+            if (tapLength < 350 && tapLength > 40) {
+                toggleCardMode();
+                e.preventDefault();
+                lastHeaderTap = 0;
+                return;
+            }
+            lastHeaderTap = currentTime;
+        });
+    }
+
+    // Also allow double click or double tap on QR code to toggle back
+    if (qrWrapper) {
+        qrWrapper.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            toggleCardMode();
+        });
+
+        let lastQrTap = 0;
+        qrWrapper.addEventListener('touchend', (e) => {
+            const currentTime = Date.now();
+            const tapLength = currentTime - lastQrTap;
+            if (tapLength < 350 && tapLength > 40) {
+                toggleCardMode();
+                e.preventDefault();
+                lastQrTap = 0;
+                return;
+            }
+            lastQrTap = currentTime;
         });
     }
 

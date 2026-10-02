@@ -10,13 +10,13 @@
 
 :root {
     --bg-color: #1a1d2c;
-    --gold-theme: #ecc04a;
-    --gold-text: #d5b376;
+    --gold-theme: rgb(235, 188, 70);
+    --gold-text: rgb(254, 229, 181);
     --card-bg: #ffffff;
     --text-primary: #000000;
     --text-title: #5b626e;
     --text-secondary: #7f7f7f;
-    --status-green: #00b050;
+    --status-green: rgb(0, 203, 69);
 }
 
 body {
@@ -131,7 +131,7 @@ body {
 }
 
 .user-id {
-    color: #ffd666; /* Brighter yellow */
+    color: var(--gold-text);
     font-size: 4.45cqw; /* Adjusted size */
     font-weight: 500;
     letter-spacing: 0.08cqw;
@@ -148,6 +148,40 @@ body {
     margin-bottom: 0;
     display: flex;
     flex-direction: column;
+    transition: height 0.25s ease;
+}
+
+/* Card Mode: QR Code Exit State */
+.compliance-card.qr-mode {
+    height: 100.8cqw;
+}
+
+.compliance-card.qr-mode .icon-wrapper,
+.compliance-card.qr-mode .status-group {
+    display: none !important;
+}
+
+.qr-wrapper {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    user-select: none;
+    cursor: pointer;
+}
+
+.compliance-card.qr-mode .qr-wrapper {
+    display: flex;
+}
+
+.qr-code-img {
+    width: 51.2cqw;
+    height: 51.2cqw;
+    max-width: 100%;
+    object-fit: contain;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    display: block;
 }
 
 /* Yellow card header */
@@ -166,6 +200,9 @@ body {
     border-top-left-radius: 2.30cqw;
     border-top-right-radius: 2.30cqw;
     position: relative;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 /* Ticket circle cutouts at header seam */
@@ -225,7 +262,7 @@ body {
     justify-content: center;
     align-items: center;
     margin-bottom: 0;
-    box-shadow: 0 0.6cqw 1.8cqw rgba(235, 176, 45, 0.2);
+    box-shadow: 0 0.6cqw 1.8cqw rgba(235, 188, 70, 0.2);
 }
 
 .icon-wrapper svg {
@@ -282,14 +319,25 @@ body {
 
 /* Green status timers */
 .active-status {
-    font-size: 4.31cqw; /* 4.54cqw * 0.95 */
+    font-size: 4.15cqw;
     font-weight: 500; /* Regular/medium weight, not bold */
     color: var(--status-green);
     margin-bottom: 0.86cqw; /* 12px / 1320px */
+    animation: blinkFade 1.4s ease-in-out infinite;
+    will-change: opacity;
+}
+
+@keyframes blinkFade {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
 }
 
 .countdown-timer {
-    font-size: 4.03cqw; /* 4.24cqw * 0.95 */
+    font-size: 4.15cqw;
     font-weight: 500; /* Regular/medium weight, not bold */
     color: var(--status-green);
 }
