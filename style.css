@@ -68,7 +68,7 @@ body {
 
 .status-bar-mock {
     width: 100%;
-    height: calc(100cqh / 100 + 6.4cqw); /* Covers from the very top down seamlessly */
+    height: 12.5cqw; /* Proportional on desktop mock (~54px) */
     background-color: #ffffff;
     z-index: 10;
     flex-shrink: 0;
@@ -100,7 +100,7 @@ body {
     }
 }
 
-/* Mobile: take full screen */
+/* Mobile: take full screen and fit iPhone notch/Dynamic Island precisely */
 @media (max-width: 600px) {
     body {
         background: #ffffff; /* Ensure native device overscroll at body level is white */
@@ -108,8 +108,13 @@ body {
     .phone-container {
         width: 100vw;
         height: 100vh;
+        height: 100dvh;
         border-radius: 0;
         border: none;
+    }
+    .status-bar-mock {
+        height: env(safe-area-inset-top, 47px);
+        min-height: 47px; /* Fits notch (47px) and Dynamic Island (54px-59px) */
     }
 }
 
@@ -383,7 +388,7 @@ body {
     text-shadow: 0 0.08cqw 0.15cqw rgba(0,0,0,0.2);
     z-index: 1;
     position: relative;
-    margin-bottom: 8.33cqw;
+    margin-bottom: max(8.33cqw, calc(env(safe-area-inset-bottom, 0px) + 4cqw));
 }
 
 
