@@ -1,0 +1,23 @@
+{
+  "name": "防摄盾",
+  "short_name": "防摄盾",
+  "description": "Security Entry Compliance Verification Portal",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#181c27",
+  "theme_color": "#015cf5",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
