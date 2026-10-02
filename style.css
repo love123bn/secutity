@@ -68,7 +68,7 @@ body {
 
 .status-bar-mock {
     width: 100%;
-    height: calc(100cqh / 100); /* Exactly 1/100 of the phone container height */
+    height: calc(100cqh / 100 + 6.4cqw); /* Covers from the very top down seamlessly */
     background-color: #ffffff;
     z-index: 10;
     flex-shrink: 0;
@@ -131,7 +131,7 @@ body {
 
 /* Content blocks positioning */
 .header-container {
-    margin-top: 6.0cqw; /* Centered between top status bar and yellow card header */
+    margin-top: 5.2cqw; /* Balanced spacing with status bar mock */
     margin-bottom: 6.0cqw;
     text-align: center;
     z-index: 1;
