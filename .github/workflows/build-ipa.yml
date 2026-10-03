@@ -1,0 +1,152 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build-ipa:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create iOS App Wrapper & Compile Binary
+        run: |
+          mkdir -p Payload/SecurityApp.app
+          
+          # Create minimal Objective-C WKWebView wrapper
+          cat << 'EOF' > main.m
+          #import <UIKit/UIKit.h>
+          #import <WebKit/WebKit.h>
+
+          @interface AppDelegate : UIResponder <UIApplicationDelegate>
+          @property (strong, nonatomic) UIWindow *window;
+          @end
+
+          @implementation AppDelegate
+          - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+              self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+              self.window.backgroundColor = [UIColor colorWithRed:24.0/255.0 green:28.0/255.0 blue:39.0/255.0 alpha:1.0];
+              
+              UIViewController *vc = [[UIViewController alloc] init];
+              vc.view.backgroundColor = self.window.backgroundColor;
+              
+              WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
+              [config.preferences setValue:@YES forKey:@"allowFileAccessFromFileURLs"];
+              config.allowsInlineMediaPlayback = YES;
+              
+              WKWebView *webView = [[WKWebView alloc] initWithFrame:vc.view.bounds configuration:config];
+              webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+              webView.scrollView.bounces = NO;
+              webView.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+              webView.opaque = NO;
+              webView.backgroundColor = [UIColor clearColor];
+              
+              NSString *htmlPath = [[NSBundle mainBundle] pathForResource:@"index" ofType:@"html"];
+              if (htmlPath) {
+                  NSURL *fileURL = [NSURL fileURLWithPath:htmlPath];
+                  [webView loadFileURL:fileURL allowingReadAccessToURL:[fileURL URLByDeletingLastPathComponent]];
+              }
+              
+              vc.view = webView;
+              self.window.rootViewController = vc;
+              [self.window makeKeyAndVisible];
+              return YES;
+          }
+          @end
+
+          int main(int argc, char * argv[]) {
+              @autoreleasepool {
+                  return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
+              }
+          }
+          EOF
+
+          # Compile ARM64 iOS executable Mach-O binary
+          SDK_PATH=$(xcrun --sdk iphoneos --show-sdk-path)
+          xcrun -sdk iphoneos clang -arch arm64 \
+            -isysroot "$SDK_PATH" \
+            -miphoneos-version-min=14.0 \
+            -fobjc-arc \
+            -framework UIKit \
+            -framework WebKit \
+            -framework Foundation \
+            main.m -o Payload/SecurityApp.app/SecurityApp
+
+          # Create Info.plist
+          cat << 'EOF' > Payload/SecurityApp.app/Info.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>CFBundleDevelopmentRegion</key>
+              <string>en</string>
+              <key>CFBundleDisplayName</key>
+              <string>防摄盾</string>
+              <key>CFBundleExecutable</key>
+              <string>SecurityApp</string>
+              <key>CFBundleIdentifier</key>
+              <string>com.security.entryportal</string>
+              <key>CFBundleInfoDictionaryVersion</key>
+              <string>6.0</string>
+              <key>CFBundleName</key>
+              <string>SecurityApp</string>
+              <key>CFBundlePackageType</key>
+              <string>APPL</string>
+              <key>CFBundleShortVersionString</key>
+              <string>1.0.0</string>
+              <key>CFBundleVersion</key>
+              <string>1</string>
+              <key>LSRequiresIPhoneOS</key>
+              <true/>
+              <key>UIRequiredDeviceCapabilities</key>
+              <array>
+                  <string>arm64</string>
+              </array>
+              <key>UISupportedInterfaceOrientations</key>
+              <array>
+                  <string>UIInterfaceOrientationPortrait</string>
+              </array>
+              <key>UIStatusBarStyle</key>
+              <string>UIStatusBarStyleLightContent</string>
+              <key>UIViewControllerBasedStatusBarAppearance</key>
+              <false/>
+              <key>CFBundleIcons</key>
+              <dict>
+                  <key>CFBundlePrimaryIcon</key>
+                  <dict>
+                      <key>CFBundleIconFiles</key>
+                      <array>
+                          <string>AppIcon</string>
+                      </array>
+                      <key>CFBundleIconName</key>
+                      <string>AppIcon</string>
+                  </dict>
+              </dict>
+          </dict>
+          </plist>
+          EOF
+
+          # Copy web assets into app
+          cp index.html Payload/SecurityApp.app/
+          cp script.js Payload/SecurityApp.app/
+          cp style.css Payload/SecurityApp.app/
+          [ -f manifest.json ] && cp manifest.json Payload/SecurityApp.app/
+          [ -f apple-touch-icon.png ] && cp apple-touch-icon.png Payload/SecurityApp.app/AppIcon.png
+          [ -f apple-touch-icon.png ] && cp apple-touch-icon.png Payload/SecurityApp.app/AppIcon60x60@2x.png
+          [ -f apple-touch-icon.png ] && cp apple-touch-icon.png Payload/SecurityApp.app/AppIcon60x60@3x.png
+          cp *.png Payload/SecurityApp.app/ 2>/dev/null || true
+          cp *.ico Payload/SecurityApp.app/ 2>/dev/null || true
+          cp *.svg Payload/SecurityApp.app/ 2>/dev/null || true
+
+          # Create unsigned IPA
+          zip -qry SecurityApp.ipa Payload
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SecurityApp-ipa
+          path: SecurityApp.ipa
+          retention-days: 14
